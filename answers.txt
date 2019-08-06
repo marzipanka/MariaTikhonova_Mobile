@@ -1,0 +1,10 @@
+Question 5:
+    To run tests on a real device following thing was changed:
+      deviceName capability in prepareAndroidNative() method in setup.DriverSetup class
+      capabilities.setCapability("deviceName","711HEBRN238CF");
+
+Question 6:
+    The algorithm of connecting a real device to Appium was almost the same as connecting an emulator.
+    I just changed the deviceName to the name of my phone. I referred to "adb devices" command in command line
+    to find out the name of my device.
+    As for running tests, I haven't noticed any differences.

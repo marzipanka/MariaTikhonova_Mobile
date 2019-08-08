@@ -7,7 +7,15 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
+
+/**
+ * TO RUN TESTS YOU NEED TO HAVE AN ENVIRONMENT VARIABLE 'EPAM_TOKEN'
+ * WITH YOUR ACCESS TOKEN VALUE IN IT
+ * (MINSK NODE)
+ *
+ * Also, to run native tests you need to install 'ContactManager.apk' manually on the mobile device.
+ */
 
 @Test(groups = "native")
 public class SimpleNativeTests extends Hooks {

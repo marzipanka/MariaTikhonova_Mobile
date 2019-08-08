@@ -9,6 +9,12 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
+/**
+ * TO RUN TESTS YOU NEED TO HAVE AN ENVIRONMENT VARIABLE 'EPAM_TOKEN'
+ * WITH YOUR ACCESS TOKEN VALUE IN IT
+ * (MINSK NODE)
+ */
+
 @Test(groups = "web")
 public class SimpleWebTests extends Hooks {
 

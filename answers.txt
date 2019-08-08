@@ -1,11 +1,14 @@
-Question 5:
-    To run tests on a real device following thing was changed:
-      deviceName capability in prepareAndroidNative() method in setup.DriverSetup class
-      capabilities.setCapability("deviceName","711HEBRN238CF");
+Question 1:
+    Yes, test passed without any troubles.
 
+Question 3:
+    Yes, test passed.
 
-Question 6:
-    The algorithm of connecting a real device to Appium was almost the same as connecting an emulator.
-    I just changed the deviceName to the name of my phone. I referred to "adb devices" command in command line
-    to find out the name of my device.
-    As for running tests, I haven't noticed any differences.
+Question 8:
+    I see 2 drawbacks of my code:
+    1) I could use Page Objects in native tests, but I decided that in current situation it's not rational
+    because the amount of elements that I had to interact with was not that huge. I would spend more time
+    working on page objects than on writing simple code like I did.
+    2) I would put all the capabilities into TestProperties class because Driver class looks pretty messy
+    because of them. And also I may need to work with those capabilities from other classes, so I would make them
+    private fields with getters.

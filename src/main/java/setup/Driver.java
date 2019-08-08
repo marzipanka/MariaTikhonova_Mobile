@@ -2,6 +2,8 @@ package setup;
 
 import enums.PropertyFile;
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,6 +23,9 @@ public class Driver extends TestProperties {
     protected static String SUT; //site under testing
     protected static String TEST_PLATFORM;
     protected static String DRIVER;
+    protected static String DEVICE_NAME;
+    protected static String APP_PACKAGE;
+    protected static String APP_ACTIVITY;
     private static AppiumDriver driverSingle = null;
     private static WebDriverWait waitSingle;
     protected DesiredCapabilities capabilities;
@@ -29,9 +34,12 @@ public class Driver extends TestProperties {
     protected Driver(PropertyFile prop) throws IOException {
         AUT = getProp("aut", prop);
         String t_sut = getProp("sut", prop);
-        SUT = t_sut == null ? null : "http://" + t_sut;
+        SUT = t_sut == null ? null : "https://" + t_sut;
         TEST_PLATFORM = getProp("platform", prop);
-        DRIVER = getProp("driver", prop);
+        DRIVER = getProp("driver", prop).replace("${epam_token}", System.getenv("EPAM_TOKEN"));
+        DEVICE_NAME = getProp("udid", prop);
+        APP_PACKAGE = getProp("appPackage", prop);
+        APP_ACTIVITY = getProp("appActivity", prop);
     }
 
     /**
@@ -43,10 +51,11 @@ public class Driver extends TestProperties {
         capabilities = new DesiredCapabilities();
         String browserName;
 
+        capabilities.setCapability("udid", DEVICE_NAME);
+
         //Setup test platform: Android or iOS. Browser also depends on a platform.
         switch (TEST_PLATFORM) {
             case "Android":
-                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554"); //default Android emulator
                 browserName = "Chrome";
                 break;
             case "iOS":
@@ -64,6 +73,8 @@ public class Driver extends TestProperties {
             System.out.println("AUT: " + AUT);
             File app = new File(AUT);
             capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+            capabilities.setCapability("appPackage", APP_PACKAGE);
+            capabilities.setCapability("appActivity", APP_ACTIVITY);
             System.out.println("AUT was initialized");
         } else if (SUT != null && AUT == null) {
             //Web
@@ -73,7 +84,7 @@ public class Driver extends TestProperties {
         } else {
             throw new Exception("Unclear type of mobile app");
         }
-
+        System.out.println(capabilities.toString());
 
         //Init driver for local Appium server with capabilities have been set
         if (driverSingle == null) {
@@ -88,7 +99,7 @@ public class Driver extends TestProperties {
         }
     }
 
-    public AppiumDriver driver(PropertyFile prop) throws Exception {
+    protected AppiumDriver driver(PropertyFile prop) throws Exception {
         if (driverSingle == null) {
             System.out.println("Driver in driver() method is null");
             prepareDriver(prop);
@@ -96,7 +107,7 @@ public class Driver extends TestProperties {
         return driverSingle;
     }
 
-    public WebDriverWait driverWait() {
+    protected WebDriverWait driverWait() {
         return waitSingle;
     }
 }

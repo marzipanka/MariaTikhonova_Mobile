@@ -17,12 +17,13 @@ import java.net.URL;
 public class Driver extends TestProperties {
 
     //Properties to be read
-    protected static String AUT; //(mobile) app under testing
-    protected static String SUT; //site under testing
-    protected static String TEST_PLATFORM;
-    protected static String DRIVER;
+    protected String AUT; //(mobile) app under testing
+    protected String SUT; //site under testing
+    protected String TEST_PLATFORM;
+    protected String DRIVER;
+    protected String DEVICE_NAME;
     private static AppiumDriver driverSingle = null;
-    private static WebDriverWait waitSingle;
+    private WebDriverWait waitSingle;
     protected DesiredCapabilities capabilities;
 
     //Constructor initializes properties on driver creation
@@ -32,6 +33,11 @@ public class Driver extends TestProperties {
         SUT = t_sut == null ? null : "http://" + t_sut;
         TEST_PLATFORM = getProp("platform", prop);
         DRIVER = getProp("driver", prop);
+        DEVICE_NAME = getProp("deviceName", prop);
+    }
+
+    public void driverTearDown() {
+        driverSingle = null;
     }
 
     /**
@@ -46,7 +52,7 @@ public class Driver extends TestProperties {
         //Setup test platform: Android or iOS. Browser also depends on a platform.
         switch (TEST_PLATFORM) {
             case "Android":
-                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554"); //default Android emulator
+                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, DEVICE_NAME); //default Android emulator
                 browserName = "Chrome";
                 break;
             case "iOS":

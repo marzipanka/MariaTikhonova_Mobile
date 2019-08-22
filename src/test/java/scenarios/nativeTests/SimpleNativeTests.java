@@ -2,46 +2,62 @@ package scenarios.nativeTests;
 
 import enums.PropertyFile;
 import hooks.Hooks;
-import org.openqa.selenium.By;
+import io.appium.java_client.android.AndroidElement;
 import org.testng.annotations.Test;
+import pages.HomePage;
+import pages.NewContactPage;
 
-import java.io.IOException;
-
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 @Test(groups = "native")
 public class SimpleNativeTests extends Hooks {
 
-    protected SimpleNativeTests() throws IOException {
+    private HomePage homePage;
+    private NewContactPage newContactPage;
+
+    protected SimpleNativeTests() throws Exception {
         super(PropertyFile.NATIVE);
+        homePage = new HomePage(driver());
+        newContactPage = new NewContactPage(driver());
     }
 
     @Test(groups = "native", description = "Just click on button 'Add contact'")
     public void simplestTest() throws Exception {
 
-        String app_package_name = "com.example.android.contactmanager:id/";
-
-        //click of Add Contact button
-        By add_btn = By.id(app_package_name + "addContactButton");
-        driver().findElement(add_btn).click();
-        System.out.println("Add Contact button clicked");
+        //click Add Contact button
+        clickElement(homePage.getAddContactButton());
 
         //check Target Account field is displayed
-        checkContactManagerElementIsDisplayed("accountSpinner");
+        checkElementIsDisplayed(newContactPage.getTargetAccount());
 
         //check Contact Name field is displayed
-        checkContactManagerElementIsDisplayed("contactNameEditText");
+        checkElementIsDisplayed(newContactPage.getContactName());
 
         //check Contact Phone field is displayed
-        checkContactManagerElementIsDisplayed("contactPhoneEditText");
+        checkElementIsDisplayed(newContactPage.getContactPhone());
+
+        //check keyboard is displayed
+        clickElement(newContactPage.getContactName());
+        fillTextFieldWithText(newContactPage.getContactName(), "Bob");
+        checkTextInTextFieldIsDisplayed(newContactPage.getContactName(), "Bob");
 
         System.out.println("Simplest Appium test done");
     }
 
-    private void checkContactManagerElementIsDisplayed(String id) throws Exception {
-        String app_package_name = "com.example.android.contactmanager:id/";
-        By element = By.id(app_package_name + id);
-        assertTrue(driver().findElement(element).isDisplayed());
-        System.out.println(id + " checked");
+    private void checkElementIsDisplayed(AndroidElement element) {
+        assertTrue(element.isDisplayed());
+    }
+
+    private void clickElement(AndroidElement element) {
+        element.click();
+    }
+
+    private void checkTextInTextFieldIsDisplayed(AndroidElement element, String text) {
+        assertEquals(element.getText(), text);
+    }
+
+    private void fillTextFieldWithText(AndroidElement element, String text) {
+        element.sendKeys(text);
     }
 }

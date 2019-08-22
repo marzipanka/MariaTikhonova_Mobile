@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="AllGroupsTests">
+
+    <test name="AllGroupsTest">
+        <groups>
+            <run>
+                <include name="native"/>
+                <include name="web"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="scenarios.nativeTests.SimpleNativeTests"/>
+            <class name="scenarios.webTests.SimpleWebTests"/>
+        </classes>
+    </test>
+</suite>

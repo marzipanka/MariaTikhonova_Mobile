@@ -5,12 +5,16 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.specification.RequestSpecification;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
+import static io.restassured.RestAssured.given;
 
 /**
  * Initialize a driver with test properties
@@ -19,15 +23,15 @@ import java.net.URL;
 public class Driver extends TestProperties {
 
     //Properties to be read
-    protected static String AUT; //(mobile) app under testing
-    protected static String SUT; //site under testing
-    protected static String TEST_PLATFORM;
-    protected static String DRIVER;
-    protected static String DEVICE_NAME;
-    protected static String APP_PACKAGE;
-    protected static String APP_ACTIVITY;
+    protected String AUT; //(mobile) app under testing
+    protected String SUT; //site under testing
+    protected String TEST_PLATFORM;
+    protected String DRIVER;
+    protected String UDID;
+    protected String APP_PACKAGE;
+    protected String APP_ACTIVITY;
     private static AppiumDriver driverSingle = null;
-    private static WebDriverWait waitSingle;
+    private WebDriverWait waitSingle;
     protected DesiredCapabilities capabilities;
 
     //Constructor initializes properties on driver creation
@@ -37,9 +41,13 @@ public class Driver extends TestProperties {
         SUT = t_sut == null ? null : "https://" + t_sut;
         TEST_PLATFORM = getProp("platform", prop);
         DRIVER = getProp("driver", prop).replace("${epam_token}", System.getenv("EPAM_TOKEN"));
-        DEVICE_NAME = getProp("udid", prop);
+        UDID = getProp("udid", prop);
         APP_PACKAGE = getProp("appPackage", prop);
         APP_ACTIVITY = getProp("appActivity", prop);
+    }
+
+    public void driverTearDown() {
+        driverSingle = null;
     }
 
     /**
@@ -51,7 +59,7 @@ public class Driver extends TestProperties {
         capabilities = new DesiredCapabilities();
         String browserName;
 
-        capabilities.setCapability("udid", DEVICE_NAME);
+        capabilities.setCapability("udid", UDID);
 
         //Setup test platform: Android or iOS. Browser also depends on a platform.
         switch (TEST_PLATFORM) {
@@ -80,6 +88,7 @@ public class Driver extends TestProperties {
             //Web
             System.out.println("SUT: " + SUT);
             capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
+            capabilities.setCapability("chromedriverDisableBuildCheck", true);
             System.out.println("SUT was initialized");
         } else {
             throw new Exception("Unclear type of mobile app");
@@ -109,5 +118,18 @@ public class Driver extends TestProperties {
 
     protected WebDriverWait driverWait() {
         return waitSingle;
+    }
+
+    public static void installApp(String endpoint, String token, String udid, String filePath) {
+        RequestSpecification REQUEST_SPECIFICATION = new RequestSpecBuilder()
+                .setBaseUri(endpoint + "/" + udid)
+                .addHeader("Authorization", "Bearer " + token)
+                .addMultiPart(new File(filePath))
+                .setRelaxedHTTPSValidation()
+                .build();
+
+        io.restassured.response.Response response = given(REQUEST_SPECIFICATION)
+                .post();
+        System.out.println("Apk installation post response with code: " + response.getStatusCode());
     }
 }

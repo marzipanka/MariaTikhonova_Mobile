@@ -8,7 +8,6 @@ import setup.Driver;
 
 import java.io.IOException;
 
-
 public class Hooks extends Driver {
 
     private PropertyFile prop;

@@ -2,8 +2,6 @@ package setup;
 
 import enums.PropertyFile;
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -120,10 +118,10 @@ public class Driver extends TestProperties {
         return waitSingle;
     }
 
-    public static void installApp(String endpoint, String token, String udid, String filePath) {
+    public static void installApp(String endpoint, String udid, String filePath) {
         RequestSpecification REQUEST_SPECIFICATION = new RequestSpecBuilder()
-                .setBaseUri(endpoint + "/" + udid)
-                .addHeader("Authorization", "Bearer " + token)
+                .setBaseUri(endpoint + udid)
+                .addHeader("Authorization", "Bearer " + System.getenv("EPAM_TOKEN"))
                 .addMultiPart(new File(filePath))
                 .setRelaxedHTTPSValidation()
                 .build();

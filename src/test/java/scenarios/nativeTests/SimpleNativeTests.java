@@ -13,8 +13,6 @@ import static org.testng.Assert.*;
  * TO RUN TESTS YOU NEED TO HAVE AN ENVIRONMENT VARIABLE 'EPAM_TOKEN'
  * WITH YOUR ACCESS TOKEN VALUE IN IT
  * (MINSK NODE)
- *
- * Also, to run native tests you need to install 'ContactManager.apk' manually on the mobile device.
  */
 
 @Test(groups = "native")
@@ -25,6 +23,7 @@ public class SimpleNativeTests extends Hooks {
 
     protected SimpleNativeTests() throws Exception {
         super(PropertyFile.NATIVE);
+        installApp("https://mobilecloud.epam.com/automation/api/storage/install/", UDID, AUT);
         homePage = new HomePage(driver());
         newContactPage = new NewContactPage(driver());
     }
